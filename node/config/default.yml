@@ -2,6 +2,6 @@ http-port: 3000
 https-port: 3443
 servers:
   - name: first
-    host: http://www.w3.org
+    host: https://www.yahoo.com:443
   - name: second
     host: https://www.google.com:443
