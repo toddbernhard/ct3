@@ -2,11 +2,13 @@ package com.ltfme.loadbalancer
 
 import javax.inject.{Inject, Singleton}
 
+import com.google.inject.ImplementedBy
 import com.ltfme.loadbalancer.util.{Config, Server}
 import play.api.http.HeaderNames
 import play.api.libs.iteratee.Enumerator
 import play.api.libs.ws.WSClient
 import play.api.mvc._
+import play.mvc.Http.Status
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
@@ -16,9 +18,10 @@ import scala.concurrent.Future
  * Date: 10/21/15
  * Time: 9:52 AM
  */
-sealed trait ReverseProxy[REQ, RES] {
+@ImplementedBy(classOf[PlayReverseProxyWithWS])
+sealed trait PlayReverseProxy[RES] {
 
-  def proxyToServer(request: REQ): RES
+  def proxyToServer(request: Request[RawBuffer]): RES
 
   protected def headers(h: Map[String, Seq[String]], s: Server) =
     (h.toSeq.flatMap {
@@ -33,32 +36,21 @@ sealed trait ReverseProxy[REQ, RES] {
 }
 
 @Singleton
-class PlayReverseProxyWithWS @Inject()(ws: WSClient, stickyStrategy: StickyStrategy) extends ReverseProxy[Request[RawBuffer], Future[Result]] {
+class PlayReverseProxyWithWS @Inject()(ws: WSClient, stickyStrategy: StickyStrategy) extends PlayReverseProxy[Future[Result]] {
   override def proxyToServer(request: Request[RawBuffer]): Future[Result] = {
 
-    val serverBoundAndReady = request.cookies.get(Config.cookieName) match {
-      case Some(cookie) => stickyStrategy.server(cookie.value)
-      case None => None
-    }
+    val cookie = request.cookies.get(Config.cookieName)
+    val server = cookie.map(c => stickyStrategy.server(c.value).getOrElse(stickyStrategy.selectServer)).
+        getOrElse(stickyStrategy.selectServer)
 
-    serverBoundAndReady match {
-      case Some(s) => doProxy(request, s)
-      case None =>
-        println(s"REDIRECTING TO: ${url(request)}")
-        Future(Results.Found(url(request)).
-            withCookies(Cookie(Config.cookieName, stickyStrategy.selectServer.name)))
-    }
-  }
+    println(s"COOKIE: ${cookie.map(_.value).getOrElse("undefined")} - ${request.method} ${request.uri} --> ${server.host}")
 
-  private def url(request: Request[RawBuffer]) = {
-    (if (request.secure) "https" else "http") + "://" +
-        request.host + request.path +
-        (if (request.rawQueryString.isEmpty) "" else s"?${request.rawQueryString}")
+    doProxy(request, server)
   }
 
   private def doProxy(request: Request[RawBuffer], server: Server): Future[Result] = {
     val proxyRequest =
-      ws.url(server.host + request.path)
+      ws.url(server.host + request.uri)
           .withFollowRedirects(true)
           .withMethod(request.method)
           .withHeaders(headers(request.headers.toMap, server): _*)
@@ -77,8 +69,9 @@ class PlayReverseProxyWithWS @Inject()(ws: WSClient, stickyStrategy: StickyStrat
           case (k, v) => v.map((k, _))
         }
 
-        println(s"HEADERS: $resHeaders")
-        new Results.Status(r.status).chunked(Enumerator(r.bodyAsBytes)).withHeaders(resHeaders: _*)
+        new Results.Status(r.status).chunked(Enumerator(r.bodyAsBytes)).
+            withHeaders(resHeaders: _*).
+            withCookies(Cookie(Config.cookieName, server.name))
     }
   }
 }
