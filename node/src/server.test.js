@@ -22,14 +22,14 @@ describe('server', () => {
         return xhr;
     };
 
-    it('should reverse proxy to w3c', done => {
+    it('should reverse proxy to yahoo', done => {
         setTimeout(function () {
         }, 0);
 
         var xhr = getRequest('LB_STICKY=first', function () {
 
-          expect(xhr.getResponseHeader('server')).toEqual('Apache/2');
-          expect(xhr.responseText).toContain('Contact W3C');
+          expect(xhr.getResponseHeader('server')).toEqual('ATS');
+          expect(xhr.responseText).toContain('Yahoo en Español');
           done();
         });
 

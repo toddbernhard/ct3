@@ -25,7 +25,7 @@ class ProxySpec extends Specification {
     "should reverse proxy google" in new WithApplication {
       route(FakeRequest(GET, "/").withCookies(Cookie(Config.cookieName, "second"))) match {
         case Some(r) =>
-          headers(r).getOrElse("server", "") must beEqualTo("gws")
+          headers(r).getOrElse("Server", "") must beEqualTo("gws")
           contentAsString(r) must contain("Google Search")
         case None => failure
       }
@@ -36,29 +36,29 @@ class ProxySpec extends Specification {
       route(FakeRequest(GET, "/images/branding/googlelogo/2x/googlelogo_color_272x92dp.png").
           withCookies(Cookie(Config.cookieName, "second"))) match {
         case Some(r) =>
-          headers(r).getOrElse("server", "") must beEqualTo("sffe")
+          headers(r).getOrElse("Server", "") must beEqualTo("sffe")
           contentAsBytes(r) must beEqualTo(res.bodyAsBytes)
         case None => failure
       }
     }
 
 
-    "should reverse proxy w3" in new WithApplication {
+    "should reverse proxy yahoo" in new WithApplication {
       route(FakeRequest(GET, "/").withCookies(Cookie(Config.cookieName, "first"))) match {
         case Some(r) =>
-          headers(r).getOrElse("server", "") must beEqualTo("Apache/2")
-          contentAsString(r) must contain("Contact W3C")
+          headers(r).getOrElse("Server", "") must beEqualTo("ATS")
+          contentAsString(r) must contain("Yahoo en Español")
         case None => failure
       }
 
       var res = Await.result(
-        WS.url("https://www.w3.org/2008/site/images/logo-w3c-mobile-lg").get(), timeout)
+        WS.url("https://www.yahoo.com").get(), timeout)
 
-      route(FakeRequest(GET, "/2008/site/images/logo-w3c-mobile-lg").
+      route(FakeRequest(GET, "/").
           withCookies(Cookie(Config.cookieName, "first"))) match {
         case Some(r) =>
-          headers(r).getOrElse("server", "") must beEqualTo("Apache/2")
-          contentAsBytes(r) must beEqualTo(res.bodyAsBytes)
+          headers(r).getOrElse("Server", "") must beEqualTo("ATS")
+          headers(r).getOrElse("P3P", "bad") must beEqualTo(res.header("P3P").getOrElse("data"))
         case None => failure
       }
     }
