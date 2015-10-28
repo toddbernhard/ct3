@@ -13,11 +13,6 @@ import play.mvc.Http.Status
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
-/**
- * User: ilya
- * Date: 10/21/15
- * Time: 9:52 AM
- */
 @ImplementedBy(classOf[PlayReverseProxyWithWS])
 sealed trait PlayReverseProxy[RES] {
 
@@ -75,6 +70,3 @@ class PlayReverseProxyWithWS @Inject()(ws: WSClient, stickyStrategy: StickyStrat
     }
   }
 }
-
-
-

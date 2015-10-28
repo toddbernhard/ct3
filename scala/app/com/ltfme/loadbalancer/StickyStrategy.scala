@@ -5,12 +5,6 @@ import com.ltfme.loadbalancer.util.{Server, Config}
 
 import scala.util.Random
 
-/**
- * User: ilya
- * Date: 10/21/15
- * Time: 11:55 AM
- */
-
 @ImplementedBy(classOf[RandomStrategy])
 sealed abstract class StickyStrategy {
 
