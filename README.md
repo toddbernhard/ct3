@@ -21,25 +21,24 @@ Also implement a custom X-For-App header that will forward the selected server n
 
 
 ### Task 3
-
-If you find anything in the application that can be more concise, cleaner, or benefit from refactoring, please do that.  Also, if you see a way to improve the unit tests, please do so.  This includes the existing functionality as well as anything you add/modify.
-
-NOTE: We love functional programming.  So if you see imperative code that can be more concisely represented with functional constructs, make us happy!
-
-
-### Task 4 **(BONUS)**
 When a new user (session) is created during the first visit, the session cookie that we assign does not exist.  We assign this cookie on the first request by randomly selecting a server from the pool and that cookie is used for the duration of the session.  A concurrency issue exists there in Chrome and possibly other browsers when proxying to SSL servers (maybe others, but we mostly have been able to observe this in SSL).
 
 When the first request for say index.html comes in, the proxy selects a server, uses it to proxy the request and then before streaming the response, assigns a cookie (cookie name is in the config file).  When the browser renders the response, resources on that page (i.e. javascript, css, images) are requested concurrently, but these concurrent requests do not have the cookie set as they appear to the proxy as new requests.  The proxy then goes through the same process of picking a server (which in many cases isn't the same as original request) and proxying the response to that server as well as assigning a cookie with a different server name.  This basically yields the initial session request non-deterministic due to the race conditions imposed by concurrent resource requests.
 
 To find the problem, you must either clear all your cookies/page cache on each request, or just use Chrome's incognito mode.  Start incognito mode, load the url (localhost) and look at the logs.  The logs log the request uri and where it is going.  Some of the uris will not have a cookie set.  Sometimes the page will render broken, sometimes it'll render ok, but some resources on that page will receive a 404.  You can also use the Chrome javascript console instead of the proxy logs to track the 404s.
 
-You are to find and implement a solution to this problem.
+You are to find and implement a solution to this problem or discuss how you'd best approach it.
+
+### Task 4
+
+If you find anything in the application that can be more concise, cleaner, or benefit from refactoring, please do that.  Also, if you see a way to improve the unit tests, please do so.  This includes the existing functionality as well as anything you add/modify.
+
+NOTE: We love functional programming.  So if you see imperative code that can be more concisely represented with functional constructs, make us happy!
 
 
 ## Instructions
 
-1. Please fork the repository to your own in github.
-2. Perform the work above
-3. Submit a pull request
-4. In an in-person session, we'll discuss your changes looking at the pull request (feel free to annotate the pull request).  Be prepared to present and discuss your changes/additions with the interview team (2 people max).
+1. Please clone the repository (git clone git@github.com:BazuSports/ct3.git) (once you have a github account setup).  **DO NOT FORK THE REPO, AS IT WILL ALLOW OTHER CANDIDATES TO SEE YOUR WORK**
+2. Perform the work above **in your own branch**
+3. Commit your work, generate a diff with master and send it to us.
+4. In an in-person session, we'll discuss your changes looking at the diff.  Be prepared to present and discuss your changes/additions with the interview team (2 people max).
