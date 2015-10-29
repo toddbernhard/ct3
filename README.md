@@ -38,7 +38,7 @@ NOTE: We love functional programming.  So if you see imperative code that can be
 
 ## Instructions
 
-1. Please clone the repository (git clone git@github.com:BazuSports/ct3.git) (once you have a github account setup).  **DO NOT FORK THE REPO, AS IT WILL ALLOW OTHER CANDIDATES TO SEE YOUR WORK**
+1. Please clone the repository `git clone git@github.com:BazuSports/ct3.git` (once you have a github account setup).  **DO NOT FORK THE REPO, AS IT WILL ALLOW OTHER CANDIDATES TO SEE YOUR WORK**
 2. Perform the work above **in your own branch**
 3. Commit your work, generate a diff with master and send it to us.
 4. In an in-person session, we'll discuss your changes looking at the diff.  Be prepared to present and discuss your changes/additions with the interview team (2 people max).
