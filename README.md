@@ -1,3 +1,11 @@
+## Instructions
+
+1. Please clone the repository `git clone git@github.com:BazuSports/ct3.git` (once you have a github account setup).  **DO NOT FORK THE REPO, AS IT WILL ALLOW OTHER CANDIDATES TO SEE YOUR WORK**
+2. Perform the work below **in your own branch**
+3. Commit your work, generate a diff with master and send it to us.
+4. In an in-person session, we'll discuss your changes looking at the diff.  Be prepared to present and discuss your changes/additions with the interview team (2 people max).
+
+
 ## A/B load balancing proxy CT3
 
 This is a proxy load balancer created to facilitate A/B testing. This means that certain user sessions are assigned to various servers that run a variation of the application in question.  Imagine you want to release a feature to only certain users.  You can create a branch, deploy it to a server and direct x amount of traffic towards that server. You can do the same with multiple branch deployments.
@@ -34,11 +42,3 @@ You are to find and implement a solution to this problem or discuss how you'd be
 If you find anything in the application that can be more concise, cleaner, or benefit from refactoring, please do that.  Also, if you see a way to improve the unit tests, please do so.  This includes the existing functionality as well as anything you add/modify.
 
 NOTE: We love functional programming.  So if you see imperative code that can be more concisely represented with functional constructs, make us happy!
-
-
-## Instructions
-
-1. Please clone the repository `git clone git@github.com:BazuSports/ct3.git` (once you have a github account setup).  **DO NOT FORK THE REPO, AS IT WILL ALLOW OTHER CANDIDATES TO SEE YOUR WORK**
-2. Perform the work above **in your own branch**
-3. Commit your work, generate a diff with master and send it to us.
-4. In an in-person session, we'll discuss your changes looking at the diff.  Be prepared to present and discuss your changes/additions with the interview team (2 people max).
