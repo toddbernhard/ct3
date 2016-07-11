@@ -47,7 +47,7 @@ class ProxySpec extends Specification {
       route(FakeRequest(GET, "/").withCookies(Cookie(Config.cookieName, "first"))) match {
         case Some(r) =>
           headers(r).getOrElse("Server", "") must beEqualTo("ATS")
-          contentAsString(r) must contain("Yahoo en Español")
+          contentAsString(r) must contain("mail.yahoo.com")
         case None => failure
       }
 
